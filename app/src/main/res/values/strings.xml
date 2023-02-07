@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Notas</string>
+    <string name="update_note">Actualizar nota</string>
+    <string name="create_note">Crear nota</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.notas.presentation.details
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,16 +38,16 @@ fun DetailsScreen(
                     }
                 },
                 title = {
-                    Text("Detalles")
+                    Text(if(viewModel.state.value.id != -1) "Actualizar nota" else "Crear nota")
                 },
                 actions = {
-                    IconButton(onClick = { if (viewModel.state.value.id != -1) viewModel.onEvent(DetailsEvent.OnUpdate(
-                        Note(
-                            id = viewModel.state.value.id,
-                            title = viewModel.state.value.title,
-                            description = viewModel.state.value.description
-                        )
-                    )) else viewModel.onEvent(DetailsEvent.OnSave) }) {
+                    IconButton(
+                        onClick = {
+                            if (viewModel.state.value.id != -1 || viewModel.state.value.id == null)
+                                viewModel.onEvent(DetailsEvent.OnUpdate)
+                            else
+                                viewModel.onEvent(DetailsEvent.OnSave)
+                        }) {
                         Icon(imageVector = Icons.Default.Check, contentDescription = "save")
                     }
                 }

@@ -59,7 +59,13 @@ class DetailsViewModel @Inject constructor(
             }
             is DetailsEvent.OnUpdate -> {
                 viewModelScope.launch {
-                    updateNote.invoke(event.updatedNote)
+                    updateNote.invoke(
+                        Note(
+                            id = state.value.id,
+                            title = state.value.title,
+                            description = state.value.description
+                        )
+                    )
                 }
                 _state.value = state.value.copy(shouldExit = true)
             }
