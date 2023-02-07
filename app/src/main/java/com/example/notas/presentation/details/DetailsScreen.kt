@@ -12,10 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.notas.domain.models.Note
 
 @Composable
 fun DetailsScreen(
-    onClose: () ->Unit,
+    onClose: () -> Unit,
     viewModel: DetailsViewModel = hiltViewModel()
 ){
     
@@ -39,7 +40,13 @@ fun DetailsScreen(
                     Text("Detalles")
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.onEvent(DetailsEvent.OnSave) }) {
+                    IconButton(onClick = { if (viewModel.state.value.id != -1) viewModel.onEvent(DetailsEvent.OnUpdate(
+                        Note(
+                            id = viewModel.state.value.id,
+                            title = viewModel.state.value.title,
+                            description = viewModel.state.value.description
+                        )
+                    )) else viewModel.onEvent(DetailsEvent.OnSave) }) {
                         Icon(imageVector = Icons.Default.Check, contentDescription = "save")
                     }
                 }

@@ -47,25 +47,19 @@ class DetailsViewModel @Inject constructor(
     fun onEvent(event: DetailsEvent){
         when(event){
             is DetailsEvent.OnSave -> {
-                if(state.value.id == -1){
-                    viewModelScope.launch {
-                        insertNote.invoke(
-                            Note(
-                                title = state.value.title,
-                                description = state.value.description
-                            )
+                viewModelScope.launch {
+                    insertNote.invoke(
+                        Note(
+                            title = state.value.title,
+                            description = state.value.description
                         )
-                    }
-                }else{
-                    viewModelScope.launch {
-                        updateNote.invoke(
-                            Note(
-                                id = state.value.id,
-                                title = state.value.title,
-                                description = state.value.description
-                            )
-                        )
-                    }
+                    )
+                }
+                _state.value = state.value.copy(shouldExit = true)
+            }
+            is DetailsEvent.OnUpdate -> {
+                viewModelScope.launch {
+                    updateNote.invoke(event.updatedNote)
                 }
                 _state.value = state.value.copy(shouldExit = true)
             }

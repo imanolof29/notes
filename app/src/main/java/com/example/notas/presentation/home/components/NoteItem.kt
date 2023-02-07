@@ -25,7 +25,6 @@ fun NoteItem(
             .padding(2.dp)
             .clickable {
                        onClick(note.id!!)
-
             },
     ){
         Column(modifier = Modifier.padding(8.dp)){
