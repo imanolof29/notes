@@ -1,4 +1,4 @@
-# notes
+# Notes
 
 Simple notes app
 
@@ -12,7 +12,7 @@ Simple notes app
 - Clean Architecture
 
 ## Features
-- List note
+- List notes
 - Create note
 - Update note
 - Delete note
