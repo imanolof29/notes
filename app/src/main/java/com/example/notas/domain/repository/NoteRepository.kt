@@ -7,6 +7,12 @@ interface NoteRepository {
 
     fun getNotes(): Flow<List<Note>>
 
+    fun getPendingNotes(): Flow<List<Note>>
+
+    fun getCompletedNotes(): Flow<List<Note>>
+
+    fun getExpiredNotes(): Flow<List<Note>>
+
     fun getNoteById(id: Int): Flow<Note>
 
     suspend fun insertNote(note: Note)

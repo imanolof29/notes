@@ -7,6 +7,9 @@ import com.example.notas.domain.models.Note
 import com.example.notas.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.ZoneId
+import java.time.LocalDateTime
+import java.time.Instant
 import javax.inject.Inject
 
 class NoteRepositoryImpl @Inject constructor(
@@ -15,6 +18,34 @@ class NoteRepositoryImpl @Inject constructor(
 
     override fun getNotes(): Flow<List<Note>> {
         return dao.getNotes().map { list ->
+            list.map {
+                it.toDomain()
+            }
+        }
+    }
+
+    override fun getPendingNotes(): Flow<List<Note>> {
+        return dao.getPendingNotes(
+            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        ).map { list ->
+            list.map {
+                it.toDomain()
+            }
+        }
+    }
+
+    override fun getCompletedNotes(): Flow<List<Note>> {
+        return dao.getCompletedNotes().map { list ->
+            list.map {
+                it.toDomain()
+            }
+        }
+    }
+
+    override fun getExpiredNotes(): Flow<List<Note>> {
+        return dao.getExpiredNotes(
+            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        ).map { list ->
             list.map {
                 it.toDomain()
             }

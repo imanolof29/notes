@@ -51,7 +51,10 @@ class DetailsViewModel @Inject constructor(
                     insertNote.invoke(
                         Note(
                             title = state.value.title,
-                            description = state.value.description
+                            description = state.value.description,
+                            createdAt = state.value.createdAt.atStartOfDay(),
+                            dueDate = state.value.dueDate.atStartOfDay(),
+                            priority = state.value.priority
                         )
                     )
                 }
@@ -63,7 +66,10 @@ class DetailsViewModel @Inject constructor(
                         Note(
                             id = state.value.id,
                             title = state.value.title,
-                            description = state.value.description
+                            description = state.value.description,
+                            createdAt = state.value.createdAt.atStartOfDay(),
+                            dueDate = state.value.dueDate.atStartOfDay(),
+                            priority = state.value.priority
                         )
                     )
                 }
@@ -72,6 +78,7 @@ class DetailsViewModel @Inject constructor(
             is DetailsEvent.OnTitleChange -> _state.value = state.value.copy(title = event.value)
             is DetailsEvent.OnDescriptionChange -> _state.value = state.value.copy(description = event.value)
             is DetailsEvent.OnBackPressed -> _state.value = state.value.copy(shouldExit = true)
+            is DetailsEvent.OnDateClick -> _state.value = state.value.copy(isDateDialogShowing = true)
         }
     }
 

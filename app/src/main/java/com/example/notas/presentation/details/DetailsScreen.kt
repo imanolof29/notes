@@ -1,6 +1,5 @@
 package com.example.notas.presentation.details
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,37 +7,39 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.notas.domain.models.Note
+import com.example.notas.R
 
 @Composable
 fun DetailsScreen(
     onClose: () -> Unit,
     viewModel: DetailsViewModel = hiltViewModel()
-){
-    
+) {
+
     val state = viewModel.state
 
-    LaunchedEffect(key1 = state.value.shouldExit){
-        if(state.value.shouldExit){
+    LaunchedEffect(key1 = state.value.shouldExit) {
+        if (state.value.shouldExit) {
             onClose()
         }
     }
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = { viewModel.onEvent(DetailsEvent.OnBackPressed) }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "back arrow")
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "back arrow"
+                        )
                     }
                 },
                 title = {
-                    Text(if(viewModel.state.value.id != -1) "Actualizar nota" else "Crear nota")
+                    Text(if (viewModel.state.value.id != -1) "Actualizar nota" else "Crear nota")
                 },
                 actions = {
                     IconButton(
@@ -56,7 +57,8 @@ fun DetailsScreen(
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
-        ){
+        ) {
+
             TextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.value.title,
@@ -66,15 +68,31 @@ fun DetailsScreen(
                 placeholder = { Text(state.value.titleHint) }
             )
             TextField(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 value = state.value.description,
                 onValueChange = {
                     viewModel.onEvent(DetailsEvent.OnDescriptionChange(it))
                 },
                 placeholder = { Text(state.value.descriptionHint) }
             )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.value.dueDate.toString(),
+                onValueChange = {
+                    print("Hello")
+                },
+                enabled = false,
+                placeholder = { Text(state.value.dueDate.toString()) },
+                leadingIcon = {
+                    IconButton(
+                        onClick = {
+                            viewModel.onEvent(DetailsEvent.OnDateClick)
+                        }
+                    ) {
+                        Icon(painterResource(R.drawable.calendar), contentDescription = "Calendar")
+                    }
+                }
+            )
         }
     }
-
-    
 }

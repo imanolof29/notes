@@ -46,7 +46,6 @@ class MainActivity : ComponentActivity() {
                             )
                         ){
                             HomeScreen(
-                                navController,
                                 navigate = { id ->
                                     navController.navigate(Screen.Details.route + "?noteId=${id}")
                                 }

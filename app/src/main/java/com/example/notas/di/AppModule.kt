@@ -29,7 +29,9 @@ object AppModule {
             application,
             NoteDatabase::class.java,
             NoteDatabase.DB_NAME
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Singleton
@@ -45,6 +47,24 @@ object AppModule {
     fun provideGetNotesUseCase(
         noteRepository: NoteRepositoryImpl
     ) = GetNotes(noteRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetPendingNotesUseCase(
+        noteRepository: NoteRepositoryImpl
+    ) = GetPendingNotes(noteRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetCompletedNotesUseCase(
+        noteRepository: NoteRepositoryImpl
+    ) = GetCompletedNotes(noteRepository)
+
+    @Singleton
+    @Provides
+    fun provideExpiredNotesUseCase(
+        noteRepository: NoteRepositoryImpl
+    ) = GetExpiredNotes(noteRepository)
 
     @Singleton
     @Provides

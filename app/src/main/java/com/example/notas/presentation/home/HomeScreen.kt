@@ -1,38 +1,31 @@
 package com.example.notas.presentation.home
 
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.rounded.Face
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.notas.domain.models.Note
-import com.example.notas.presentation.details.DetailsEvent
+import com.example.notas.domain.NoteType
+import com.example.notas.presentation.home.components.ListNotes
 import com.example.notas.presentation.home.components.NoteItem
-import com.example.notas.util.Screen
+import com.example.notas.presentation.home.components.StatusCard
+import com.example.notas.ui.theme.blue
+import com.example.notas.ui.theme.grey
+import com.example.notas.ui.theme.red
 
-@OptIn(ExperimentalMaterialApi::class)
+
 @Composable
 fun HomeScreen(
-    navController: NavController,
     navigate: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -43,70 +36,104 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Notas")
-                }
+                    Text(
+                        "Notas",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                },
+                elevation = 0.dp,
+                backgroundColor = Color.White.compositeOver(Color.Black)
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navigate(-1)
-            }) {
+            FloatingActionButton(
+                onClick = {
+                    navigate(-1)
+                }
+            ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add note")
             }
         }
     ){
 
-        if(state.value.notes.isEmpty()){
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ){
-                Text("No hay notas")
-            }
-        }
-
-        LazyColumn(modifier = Modifier.fillMaxWidth()){
-            items(
-                items = state.value.notes,
-            ){ note ->
-                val dismissState = rememberDismissState(
-                    confirmStateChange = {
-                        if(it == DismissValue.DismissedToStart) {
-                            viewModel.onEvent(HomeEvent.OnDeleteItem(note))
-                        }
-                        true
+                StatusCard(
+                    color = blue,
+                    title = "Pendientes",
+                    quantity = state.value.pendingNotes.size,
+                    onClick = {
+                        viewModel.onEvent(HomeEvent.OnNoteTypeChange(NoteType.PENDING))
+                        Log.d("CLICK", "PENDING")
                     }
                 )
-                SwipeToDismiss(
-                    state = dismissState,
-                    directions = setOf(DismissDirection.EndToStart),
-
-                    background = {
-                        val color by animateColorAsState(
-                            when (dismissState.targetValue) {
-                                DismissValue.Default -> Color.White
-                                else -> Color.Red
-                            }
-                        )
-                        val icon = Icons.Default.Delete
-                        val scale by animateFloatAsState(
-                            if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color),
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            Icon(icon, contentDescription = "Delete icon", modifier = Modifier.scale(scale))
-                        }
-                    },
-                    dismissContent = {
-                        NoteItem(note = note, onClick = navigate)
+                StatusCard(
+                    color = red,
+                    title = "Caducadas",
+                    quantity = state.value.pendingNotes.size,
+                    onClick = {
+                        viewModel.onEvent(HomeEvent.OnNoteTypeChange(NoteType.EXPIRED))
                     }
-                ) 
+                )
+                StatusCard(
+                    color = grey,
+                    title = "Completadas",
+                    quantity = state.value.completedNotes.size,
+                    onClick = {
+                        viewModel.onEvent(HomeEvent.OnNoteTypeChange(NoteType.COMPLETED))
+                    }
+                )
             }
+
+            when(state.value.noteType) {
+                NoteType.PENDING -> {
+                    Log.d("notes", state.value.pendingNotes.toString())
+                    if(state.value.pendingNotes.isEmpty()){
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ){
+                            Text("No hay notas pendientes")
+                        }
+                    }
+                    ListNotes(notes = state.value.pendingNotes)
+                }
+                NoteType.EXPIRED -> {
+                    Log.d("notes", state.value.expiredNotes.toString())
+                    if(state.value.expiredNotes.isEmpty()){
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ){
+                            Text("No hay notas caducadas")
+                        }
+                    }
+                    NoteItem(note = state.value.expiredNotes[1], onClick = {})
+                }
+                NoteType.COMPLETED -> {
+                    Log.d("notes", state.value.completedNotes.toString())
+                    if(state.value.completedNotes.isEmpty()){
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ){
+                            Text("No hay notas completadas")
+                        }
+                    }
+                    ListNotes(notes = state.value.completedNotes)
+                }
+            }
+
         }
+
     }
 }
