@@ -1,18 +1,27 @@
 package com.example.notas.presentation.details
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notas.R
+import com.example.notas.data.local.entity.Priority
+import com.example.notas.presentation.home.components.PriorityPoint
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun DetailsScreen(
     onClose: () -> Unit,
@@ -21,11 +30,15 @@ fun DetailsScreen(
 
     val state = viewModel.state
 
+    var mExpanded by remember { mutableStateOf(false) }
+
     LaunchedEffect(key1 = state.value.shouldExit) {
         if (state.value.shouldExit) {
             onClose()
         }
     }
+
+    val dateDialogState = rememberMaterialDialogState()
 
     Scaffold(
         topBar = {
@@ -42,6 +55,28 @@ fun DetailsScreen(
                     Text(if (viewModel.state.value.id != -1) "Actualizar nota" else "Crear nota")
                 },
                 actions = {
+                    Box(
+                        modifier = Modifier.clickable {
+                            mExpanded = !mExpanded
+                        }
+                    ){
+                        Text(viewModel.state.value.priority.toString())
+                        DropdownMenu(
+                            expanded = mExpanded,
+                            onDismissRequest = { mExpanded = false},
+                        ) {
+                            enumValues<Priority>().forEach {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        mExpanded = false
+                                        viewModel.onEvent(DetailsEvent.OnPriorityChange(it))
+                                    }
+                                ) {
+                                    Text(it.toString())
+                                }
+                            }
+                        }
+                    }
                     IconButton(
                         onClick = {
                             if (viewModel.state.value.id != -1 || viewModel.state.value.id == null)
@@ -58,7 +93,6 @@ fun DetailsScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-
             TextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.value.title,
@@ -87,12 +121,32 @@ fun DetailsScreen(
                     IconButton(
                         onClick = {
                             viewModel.onEvent(DetailsEvent.OnDateClick)
+                            dateDialogState.show()
                         }
                     ) {
                         Icon(painterResource(R.drawable.calendar), contentDescription = "Calendar")
                     }
                 }
             )
+            MaterialDialog(
+                dialogState = dateDialogState,
+                buttons = {
+                    positiveButton(text = "Ok") {
+                        Log.d("DATE", "OK")
+                    }
+                    negativeButton(text = "Cancelar")
+                }
+            ) {
+                datepicker(
+                    initialDate = state.value.dueDate,
+                    title = "Elige una fecha",
+                    allowedDateValidator = {
+                        it.dayOfMonth % 2 == 1
+                    }
+                ) {
+                    viewModel.onEvent(DetailsEvent.OnDateChange(it.atStartOfDay()))
+                }
+            }
         }
     }
 }

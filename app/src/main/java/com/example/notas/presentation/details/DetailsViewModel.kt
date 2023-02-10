@@ -77,8 +77,10 @@ class DetailsViewModel @Inject constructor(
             }
             is DetailsEvent.OnTitleChange -> _state.value = state.value.copy(title = event.value)
             is DetailsEvent.OnDescriptionChange -> _state.value = state.value.copy(description = event.value)
+            is DetailsEvent.OnPriorityChange -> _state.value = state.value.copy(priority = event.priority)
             is DetailsEvent.OnBackPressed -> _state.value = state.value.copy(shouldExit = true)
             is DetailsEvent.OnDateClick -> _state.value = state.value.copy(isDateDialogShowing = true)
+            is DetailsEvent.OnDateChange -> _state.value = state.value.copy(dueDate = event.newDate.toLocalDate())
         }
     }
 

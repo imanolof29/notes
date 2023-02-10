@@ -1,6 +1,7 @@
 package com.example.notas.presentation.home
 
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -26,6 +27,7 @@ import com.example.notas.ui.theme.grey
 import com.example.notas.ui.theme.red
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     navigate: (Int) -> Unit,
@@ -72,7 +74,6 @@ fun HomeScreen(
                     quantity = state.value.pendingNotes.size,
                     onClick = {
                         viewModel.onEvent(HomeEvent.OnNoteTypeChange(NoteType.PENDING))
-                        Log.d("CLICK", "PENDING")
                     }
                 )
                 StatusCard(
@@ -105,7 +106,7 @@ fun HomeScreen(
                             Text("No hay notas pendientes")
                         }
                     }
-                    ListNotes(notes = state.value.pendingNotes, textStyle = TextStyle(textDecoration = TextDecoration.None))
+                    ListNotes(notes = state.value.pendingNotes, navigate = navigate, textStyle = TextStyle(textDecoration = TextDecoration.None))
                 }
                 NoteType.EXPIRED -> {
                     Log.d("notes", state.value.expiredNotes.toString())
@@ -118,7 +119,7 @@ fun HomeScreen(
                             Text("No hay notas caducadas")
                         }
                     }
-                    ListNotes(notes = state.value.expiredNotes, textStyle = TextStyle(textDecoration = TextDecoration.None))
+                    ListNotes(notes = state.value.expiredNotes, navigate = navigate, textStyle = TextStyle(textDecoration = TextDecoration.None))
                 }
                 NoteType.COMPLETED -> {
                     Log.d("notes", state.value.completedNotes.toString())
@@ -131,7 +132,7 @@ fun HomeScreen(
                             Text("No hay notas completadas")
                         }
                     }
-                    ListNotes(notes = state.value.completedNotes, textStyle = TextStyle(textDecoration = TextDecoration.LineThrough))
+                    ListNotes(notes = state.value.completedNotes, navigate = navigate, textStyle = TextStyle(textDecoration = TextDecoration.LineThrough))
                 }
             }
 

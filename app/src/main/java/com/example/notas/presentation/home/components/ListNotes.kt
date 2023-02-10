@@ -27,6 +27,7 @@ import com.example.notas.presentation.home.HomeViewModel
 @Composable
 fun ListNotes(
     notes: List<Note>,
+    navigate: (Int) -> Unit,
     textStyle: TextStyle,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -68,7 +69,7 @@ fun ListNotes(
                     }
                 },
                 dismissContent = {
-                    NoteItem(note = note, onClick = {}, textStyle = textStyle)
+                    NoteItem(note = note, onClick = navigate, textStyle = textStyle)
                 }
             )
         }
