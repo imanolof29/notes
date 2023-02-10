@@ -13,6 +13,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.notas.domain.NoteType
@@ -76,7 +78,7 @@ fun HomeScreen(
                 StatusCard(
                     color = red,
                     title = "Caducadas",
-                    quantity = state.value.pendingNotes.size,
+                    quantity = state.value.expiredNotes.size,
                     onClick = {
                         viewModel.onEvent(HomeEvent.OnNoteTypeChange(NoteType.EXPIRED))
                     }
@@ -103,7 +105,7 @@ fun HomeScreen(
                             Text("No hay notas pendientes")
                         }
                     }
-                    ListNotes(notes = state.value.pendingNotes)
+                    ListNotes(notes = state.value.pendingNotes, textStyle = TextStyle(textDecoration = TextDecoration.None))
                 }
                 NoteType.EXPIRED -> {
                     Log.d("notes", state.value.expiredNotes.toString())
@@ -116,7 +118,7 @@ fun HomeScreen(
                             Text("No hay notas caducadas")
                         }
                     }
-                    NoteItem(note = state.value.expiredNotes[1], onClick = {})
+                    ListNotes(notes = state.value.expiredNotes, textStyle = TextStyle(textDecoration = TextDecoration.None))
                 }
                 NoteType.COMPLETED -> {
                     Log.d("notes", state.value.completedNotes.toString())
@@ -129,7 +131,7 @@ fun HomeScreen(
                             Text("No hay notas completadas")
                         }
                     }
-                    ListNotes(notes = state.value.completedNotes)
+                    ListNotes(notes = state.value.completedNotes, textStyle = TextStyle(textDecoration = TextDecoration.LineThrough))
                 }
             }
 

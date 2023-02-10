@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.notas.data.local.entity.Priority
@@ -18,7 +19,8 @@ import com.example.notas.ui.theme.*
 @Composable
 fun NoteItem(
     note: Note,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
+    textStyle: TextStyle
 ) {
     Card(
         modifier = Modifier
@@ -29,25 +31,32 @@ fun NoteItem(
             },
     ){
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Column(modifier = Modifier.padding(8.dp)){
+            Column{
                 Text(
                     text = note.title,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    style = textStyle
                 )
                 Text(
                     text = note.description?: "",
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    style = textStyle
                 )
             }
-            when(note.priority) {
-                Priority.LOW -> PriorityPoint(color = green, title = "Baja")
-                Priority.MEDIUM -> PriorityPoint(color = yellow, title = "Media")
-                Priority.HIGH -> PriorityPoint(color = red, title = "Alta")
+            Box(
+                modifier = Modifier.width(50.dp)
+            ){
+                when(note.priority) {
+                    Priority.LOW -> PriorityPoint(color = green, title = "Baja")
+                    Priority.MEDIUM -> PriorityPoint(color = yellow, title = "Media")
+                    Priority.HIGH -> PriorityPoint(color = red, title = "Alta")
+                }
             }
         }
     }

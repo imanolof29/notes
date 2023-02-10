@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notas.domain.models.Note
 import com.example.notas.presentation.home.HomeEvent
@@ -26,6 +27,7 @@ import com.example.notas.presentation.home.HomeViewModel
 @Composable
 fun ListNotes(
     notes: List<Note>,
+    textStyle: TextStyle,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
 
@@ -66,7 +68,7 @@ fun ListNotes(
                     }
                 },
                 dismissContent = {
-                    //NoteItem(note = note, onClick = navigate)
+                    NoteItem(note = note, onClick = {}, textStyle = textStyle)
                 }
             )
         }
