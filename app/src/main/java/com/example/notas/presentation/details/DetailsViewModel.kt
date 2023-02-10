@@ -35,7 +35,9 @@ class DetailsViewModel @Inject constructor(
                     getNoteById.invoke(state.value.id!!).collect{
                         _state.value = state.value.copy(
                             title = it.title,
-                            description = it.description ?: ""
+                            description = it.description ?: "",
+                            dueDate = it.dueDate.toLocalDate(),
+                            priority = it.priority
                         )
                     }
                 }
